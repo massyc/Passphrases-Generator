@@ -3,3 +3,4 @@ Passphrases Generator is a Python application that generates passphrases based o
 
 ## How to use Passphrases Generator
 You can run Passphrases Generator from a command line.
+The Passphrases Generator arguments are provided executing the ```python3 passphrasesGenerator.py -h``` command.
