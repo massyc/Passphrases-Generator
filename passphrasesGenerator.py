@@ -2,6 +2,9 @@ import random
 import argparse
 import logging
 
+# -------------------#
+# Classes definition #
+# -------------------#
 class DictionaryWord():
     def __init__(self, id, word):
         self.id = id
@@ -108,14 +111,11 @@ class Passphrase():
         if len (self.passphrase) > 0:
             randomNumberPosition = random.randint (0,len(self.passphrase) - 1)
             randomNumber = random.randint(0,9)
-            #print(f'Passphrase prima di aggiungere il numero: ',aPassphrase)
             self.passphrase = self.passphrase[:randomNumberPosition] + str(randomNumber) + self.passphrase[randomNumberPosition:]
-            #print(f'Passphrase dopo aver aggiunto il numero: ',aPassphrase)
 
     # Transform a character in the passphrase to uppercase
     def oneUppercaseChar (self):
         if len (self.passphrase) > 0:
-            #print (f'prima di oneUppercaseChar', aPassphrase)
             uppercaseSucceeded = False
             while not uppercaseSucceeded:
                 uppercasePosition = random.randint(0, len(self.passphrase)) - 1
@@ -131,148 +131,30 @@ class Passphrase():
             if x < self.numberOfWords - 1:
                 self.passphrase = self.passphrase + self.separatorCharacter
 
-        #Tronca la stringa per fare in modo che non sia più lunga della lunghezza massima
+        #Truncate the string so it doesn't exceed the maximum length
         if self.numberRequired:
             self.passphrase = self.passphrase[:self.maximumLength - 1]
         else:
             self.passphrase = self.passphrase[:self.maximumLength]
 
         if self.specialCharacterRequired:
-            #sostituisce uno dei caratteri separatori con un carattere speciale
+            #Replace one of the separators characters with a special character
             self.replaceSeparatorWithSpecialChar()
 
         if self.numberRequired:
-            #aggiunge un numero in una posizione casuale
+            #Add a number in a random position
             self.addNumber()
 
         if self.upperCaseRequired:
-            #trasforma uno dei caratteri in maiuscolo
-            self.oneUppercaseChar()
-        
-        
+            #Switch to uppercase a random character
+            self.oneUppercaseChar()    
+# --------------------------#
+# End of classes definition #
+# --------------------------#
 
-
-
-
-'''
-def loadWordsList (wordsFileName):
-    dictionaryWordsList = []
-    with open(wordsFileName) as wordsFile:
-        for line in wordsFile:
-            if line[0].isdigit():
-                word = line.strip().split(' ')
-                #dictionaryWordsList[word[0]] = word[1]
-                dictionaryWordsList.append(DictionaryWord(word[0],word[1]))
-
-    return dictionaryWordsList
-
-def loadWordsList (wordsFileName):
-    dictionaryWordsList = {}
-    with open(wordsFileName) as wordsFile:
-        for line in wordsFile:
-            if line[0].isdigit():
-                word = line.strip().split(' ')
-                dictionaryWordsList[word[0]] = word[1]
-
-    return dictionaryWordsList
-
-
-def rollTheDice():
-    dice = Dice(6)
-    return dice.roll()
-
-
-def getRandomWord (wordsList, wordMinimumLength):
-    wordFound = False
-    randomWord = ''
-
-    while not wordFound:
-        randomNumber = ''
-        dice = Dice(6)
-        for x in range (5):
-            randomNumber = randomNumber + str(dice.roll())    
-
-            for dictionaryWord in wordsList:
-                if dictionaryWord.id == randomNumber:
-                    randomWord = dictionaryWord.word
-                
-                if len(randomWord) >= wordMinimumLength:
-                    wordFound = True
-    
-    return randomWord
-
-
-def replaceSeparatorWithSpecialChar(aPassphrase, separatorCharacter):
-    specialChars = '$%&!£?^§'
-
-    #Sceglie in modo casuale il carattere speciale da usare
-    randomSpecialCharPosition = random.randint (0,len(specialChars) - 1)
-    specialChar = specialChars[randomSpecialCharPosition]
-
-    #Sceglie in modo casuale quale separatore sostituire
-    separators = aPassphrase.count(separatorCharacter)
-    randomSeparator = random.randint (1, separators)
-
-    separatorPosition = -1
-
-    for x in range (randomSeparator):
-        separatorPosition = aPassphrase.find(separatorCharacter, separatorPosition + 1, len(aPassphrase) - 1)
-
-    aPassphrase = aPassphrase[:separatorPosition] + specialChar + aPassphrase[separatorPosition+1:]
-
-    return aPassphrase
-
-
-def addNumber(aPassphrase):
-    randomNumberPosition = random.randint (0,len(aPassphrase) - 1)
-    randomNumber = random.randint(0,9)
-    print(f'Passphrase prima di aggiungere il numero: ',aPassphrase)
-    aPassphrase = aPassphrase[:randomNumberPosition] + str(randomNumber) + aPassphrase[randomNumberPosition:]
-    print(f'Passphrase dopo aver aggiunto il numero: ',aPassphrase)
-    return aPassphrase
-
-def oneUppercaseChar (aPassphrase, theSeparatorCharacter):
-    print (f'prima di oneUppercaseChar', aPassphrase)
-    uppercaseSucceeded = False
-    while not uppercaseSucceeded:
-        uppercasePosition = random.randint(0, len(aPassphrase)) - 1
-
-        if (aPassphrase[uppercasePosition] != theSeparatorCharacter):
-            aPassphrase = aPassphrase[:uppercasePosition] + aPassphrase[uppercasePosition:uppercasePosition+1].upper() + aPassphrase[uppercasePosition+1:]
-            uppercaseSucceeded = True
-
-    return aPassphrase
-
-def generatePassphrase (language, wordsQuantity, wordMinimumLenght, separatorCharacter, passphraseMaximumLength, specialCharacterRequired, numberRequired, upperCaseRequired):
-    passphrase = ''
-    dicewareWordList = DicewareWordList(language)
-    
-    for x in range (wordsQuantity):
-        passphrase = passphrase + dicewareWordList.getRandomWord(wordMinimumLenght)
-        if x < wordsQuantity - 1:
-            passphrase = passphrase + separatorCharacter
-
-    #Tronca la stringa per fare in modo che non sia più lunga della lunghezza massima
-    if numberRequired:
-        passphrase = passphrase[:passphraseMaximumLength - 1]
-    else:
-        passphrase = passphrase[:passphraseMaximumLength]
-
-    if specialCharacterRequired:
-        #sostituisce uno dei caratteri separatori con un carattere speciale
-        passphrase = replaceSeparatorWithSpecialChar(passphrase, separatorCharacter)
-
-    if numberRequired:
-        #aggiunge un numero in una posizione casuale
-        passphrase = addNumber(passphrase)
-
-    if upperCaseRequired:
-        #trasforma uno dei caratteri in maiuscolo
-        passphrase = oneUppercaseChar(passphrase, separatorCharacter)
-    
-    return passphrase
-'''
-
+# ---------------------#
+# Functions definition #
+# ---------------------#
 def getArguments():
     parser = argparse.ArgumentParser()
     
@@ -316,11 +198,14 @@ def getArguments():
     argumentsDict["debugEnabled"] = args.debug_enabled
 
     return argumentsDict
+# ----------------------------#
+# End of functions definition #
+# ----------------------------#
 
-#print (getRandomWord (loadWordsList("word_list_diceware_it.txt"),5))
-#print (getRandomWord(loadWordsList("word_list_diceware_it-IT-3.txt"),5))
-#print (generatePassphrase("it", 4, 3, ".", 99, True, True, True))
 
+# -------------------------------------#
+# Code executed when the script is ran #
+# -------------------------------------#
 arguments = getArguments()
 passphrase = Passphrase(arguments.get('language'), 
                         arguments.get('numberOfWords'), 
@@ -331,28 +216,7 @@ passphrase = Passphrase(arguments.get('language'),
                         arguments.get('numberRequired'), 
                         arguments.get('upperCaseRequired'),
                         arguments.get('debugEnabled'))
-'''
-passphrase = Passphrase("it", 
-                        4, 
-                        3, 
-                        ".", 
-                        99, 
-                        True, 
-                        True, 
-                        True)
-'''
+
 
 passphrase.generate()
 print(passphrase.passphrase)
-
-#replaceSeparatorWithSpecialChar('pippo')
-
-'''
-dwWordList = DicewareWordList('it')
-print(dwWordList.getRandomWord(5))
-'''
-
-'''
-arguments = getArguments()
-print (arguments)
-'''
